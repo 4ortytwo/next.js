@@ -11,7 +11,11 @@ const app = new App({
 export const generateAuthHeader = async () => {
   if (!app.currentUser) {
     // If no user is logged in, log in an anonymous user
-    await app.logIn(Credentials.anonymous())
+    await app.logIn(Credentials.anonymous());
+  } else {
+    // An already logged in user's access token might be stale. To guarantee that the token is
+    // valid, we refresh the user's custom data which also refreshes their access token.
+    await app.currentUser.refreshCustomData();
   }
   // Get a valid access token for the current user
   const { accessToken } = app.currentUser
